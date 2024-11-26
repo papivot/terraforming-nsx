@@ -28,7 +28,7 @@ resource "nsxt_policy_tier0_gateway" "sup-t0-gw" {
 
 #data "nsxt_policy_edge_node" "edge-1" {
 #  edge_cluster_path = data.nsxt_policy_edge_cluster.sup-edge-cluster.path
-#  display_name      = "edge-1.env1.lab.test"
+#  display_name      = "edge-1"
 #}
 
 resource "nsxt_edge_transport_node" "edge-1" {
