@@ -21,19 +21,19 @@ resource "nsxt_policy_tier0_gateway" "sup-t0-gw" {
   bgp_config {
     local_as_num    = "65003"
     multipath_relax = true
-    ecmp            = true
-    inter_sr_ibgp   = true
+    ecmp            = false
+    inter_sr_ibgp   = false
   }
 }
 
-#data "nsxt_policy_edge_node" "edge-1" {
-#  edge_cluster_path = data.nsxt_policy_edge_cluster.sup-edge-cluster.path
-#  display_name      = "edge-1"
-#}
-
-resource "nsxt_edge_transport_node" "edge-1" {
-  # (resource arguments)
+data "nsxt_policy_edge_node" "edge-1" {
+  edge_cluster_path = data.nsxt_policy_edge_cluster.sup-edge-cluster.path
+  display_name      = "edge-1"
 }
+
+#resource "nsxt_edge_transport_node" "edge-1" {
+  # (resource arguments)
+#}
 
 # Create VLAN Segments
 resource "nsxt_policy_vlan_segment" "vlan104" {
@@ -81,42 +81,42 @@ resource "time_sleep" "wait_300_seconds" {
 }
 
 # Create Tier-1 Gateway
-resource "nsxt_policy_tier1_gateway" "tier1_gw" {
-    display_name              = "sup-tier-1-01"
-    edge_cluster_path         = data.nsxt_policy_edge_cluster.sup-edge-cluster.path
-    failover_mode             = "NON_PREEMPTIVE"
-    default_rule_logging      = "false"
-    enable_firewall           = "true"
-    enable_standby_relocation = "true"
-    tier0_path                = nsxt_policy_tier0_gateway.sup-t0-gw.path
-    route_advertisement_types = ["TIER1_STATIC_ROUTES", "TIER1_CONNECTED", "TIER1_NAT", "TIER1_LB_VIP", "TIER1_LB_SNAT", "TIER1_DNS_FORWARDER_IP", "TIER1_IPSEC_LOCAL_ENDPOINT"]
-    pool_allocation           = "ROUTING"
-    ha_mode                   = "ACTIVE_STANDBY"
-    depends_on                = [time_sleep.wait_300_seconds]
-}
+#resource "nsxt_policy_tier1_gateway" "tier1_gw" {
+#    display_name              = "sup-tier-1-01"
+#    edge_cluster_path         = data.nsxt_policy_edge_cluster.sup-edge-cluster.path
+#    failover_mode             = "NON_PREEMPTIVE"
+#    default_rule_logging      = "false"
+#    enable_firewall           = "true"
+#    enable_standby_relocation = "true"
+#    tier0_path                = nsxt_policy_tier0_gateway.sup-t0-gw.path
+#    route_advertisement_types = ["TIER1_STATIC_ROUTES", "TIER1_CONNECTED", "TIER1_NAT", "TIER1_LB_VIP", "TIER1_LB_SNAT", "TIER1_DNS_FORWARDER_IP", "TIER1_IPSEC_LOCAL_ENDPOINT"]
+#    pool_allocation           = "ROUTING"
+#    ha_mode                   = "ACTIVE_STANDBY"
+#    depends_on                = [time_sleep.wait_300_seconds]
+#}
 
 data "nsxt_policy_transport_zone" "supervisor_transport_zone" {
   display_name = "supervisor_transport_zone"
 }
 
 # Create NSX-T Overlay Segment for Egress Traffic
-resource "nsxt_policy_segment" "Ingress" {
-    display_name        = "Ingress-Supervisor-Segment"
-    transport_zone_path = data.nsxt_policy_transport_zone.supervisor_transport_zone.path
-    connectivity_path   = nsxt_policy_tier1_gateway.tier1_gw.path
+#resource "nsxt_policy_segment" "Ingress" {
+#    display_name        = "Ingress-Supervisor-Segment"
+#    transport_zone_path = data.nsxt_policy_transport_zone.supervisor_transport_zone.path
+#    connectivity_path   = nsxt_policy_tier1_gateway.tier1_gw.path
 
-    subnet {
-        cidr        = "172.16.10.0/24"
-           }
-}
+#    subnet {
+#        cidr        = "172.16.10.0/24"
+#           }
+#}
 
 # Create NSX-T Overlay Segments for Egress Traffic
-resource "nsxt_policy_segment" "Egress" {
-    display_name        = "Egress-Supervisor-Segment"
-    transport_zone_path = data.nsxt_policy_transport_zone.supervisor_transport_zone.path
-    connectivity_path   = nsxt_policy_tier1_gateway.tier1_gw.path
+#resource "nsxt_policy_segment" "Egress" {
+#    display_name        = "Egress-Supervisor-Segment"
+#    transport_zone_path = data.nsxt_policy_transport_zone.supervisor_transport_zone.path
+#    connectivity_path   = nsxt_policy_tier1_gateway.tier1_gw.path
 
-    subnet {
-        cidr        = "172.16.20.0/24"
-           }
-}
+#    subnet {
+#        cidr        = "172.16.20.0/24"
+#           }
+#}
