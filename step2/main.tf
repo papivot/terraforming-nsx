@@ -74,7 +74,7 @@ resource "nsxt_edge_transport_node" "edge-1" {
   }
 
   deployment_config {
-    form_factor = "SMALL"
+    form_factor = "MEDIUM"
     node_user_settings {
       cli_username   = "admin"
       cli_password   = "VMware1!VMware1!"
